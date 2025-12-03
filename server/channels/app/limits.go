@@ -51,21 +51,21 @@ func (a *App) GetServerLimits() (*model.ServerLimits, *model.AppError) {
 	if appErr != nil {
 		return nil, model.NewAppError("GetServerLimits", "app.limits.get_app_limits.user_count.store_error", nil, "", http.StatusInternalServerError).Wrap(appErr)
 	}
+	
 	limits.ActiveUserCount = activeUserCount
-
+	limits.MaxUsersLimit = 1000
+	limits.MaxUsersHardLimit = 10000
+	limits.PostHistoryLimit = 0
+	limits.LastAccessiblePostTime = 0
+	
 	return limits, nil
 }
 func (a *App) GetPostHistoryLimit() int64 {
-	license := a.License()
-	if license == nil || license.Limits == nil || license.Limits.PostHistory == 0 {
-		// No limits applicable
-		return 0
-	}
-
-	return license.Limits.PostHistory
+	return 0
 }
 
 func (a *App) isAtUserLimit() (bool, *model.AppError) {
+	return false, nil
 	userLimits, appErr := a.GetServerLimits()
 	if appErr != nil {
 		return false, appErr
