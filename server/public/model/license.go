@@ -349,28 +349,28 @@ func (f *Features) SetDefaults() {
 }
 
 func (l *License) IsExpired() bool {
-	return l.ExpiresAt < GetMillis()
+	return false
 }
 
 func (l *License) IsPastGracePeriod() bool {
 	timeDiff := GetMillis() - l.ExpiresAt
-	return timeDiff > LicenseGracePeriod
+	return false
 }
 
 func (l *License) IsWithinExpirationPeriod() bool {
 	days := l.DaysToExpiration()
-	return days <= 60 && days >= 58
+	return false
 }
 
 func (l *License) DaysToExpiration() int {
 	dif := l.ExpiresAt - GetMillis()
 	d, _ := time.ParseDuration(fmt.Sprint(dif) + "ms")
 	days := d.Hours() / 24
-	return int(days)
+	return 9999
 }
 
 func (l *License) IsStarted() bool {
-	return l.StartsAt < GetMillis()
+	return true
 }
 
 // Cloud preview is a cloud license, that is also a trial, and the difference between the start and end date is exactly 1 hour.
@@ -383,7 +383,7 @@ func (l *License) IsCloud() bool {
 }
 
 func (l *License) IsTrialLicense() bool {
-	return l.IsTrial || (l.ExpiresAt-l.StartsAt) == trialDuration.Milliseconds() || (l.ExpiresAt-l.StartsAt) == adminTrialDuration.Milliseconds()
+	return false
 }
 
 func (l *License) IsSanctionedTrial() bool {
@@ -494,16 +494,16 @@ func (lr *LicenseRecord) PreSave() {
 // MinimumProfessionalLicense returns true if the provided license is at least a professional license.
 // Higher tier licenses also satisfy the condition.
 func MinimumProfessionalLicense(license *License) bool {
-	return license != nil && LicenseToLicenseTier[license.SkuShortName] >= ProfessionalTier
+	return true
 }
 
 // MinimumEnterpriseLicense returns true if the provided license is at least a enterprise license.
 // Higher tier licenses also satisfy the condition.
 func MinimumEnterpriseLicense(license *License) bool {
-	return license != nil && LicenseToLicenseTier[license.SkuShortName] >= EnterpriseTier
+	return true
 }
 
 // MinimumEnterpriseAdvancedLicense returns true if the provided license is at least an Enterprise Advanced license.
 func MinimumEnterpriseAdvancedLicense(license *License) bool {
-	return license != nil && LicenseToLicenseTier[license.SkuShortName] >= EnterpriseAdvancedTier
+	return true
 }
